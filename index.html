@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Soal - By Agung Cahyono</title>
+    <style>
+        :root {
+            --primary-color: #1F4E78;
+            --secondary-color: #595959;
+            --success-color: #2e7d32;
+            --error-color: #c62828;
+            --background-color: #f4f6f9;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --btn-hover: #153551;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .quiz-header h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .quiz-header p {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        .author-tag {
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-section {
+            margin-bottom: 20px;
+        }
+
+        .badge-type {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #1e88e5;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .pinyin-text {
+            font-size: 14px;
+            color: var(--secondary-color);
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        /* MCQ Styles */
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #e9ecef;
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct {
+            background-color: #e8f5e9;
+            border-color: var(--success-color);
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background-color: #ffebee;
+            border-color: var(--error-color);
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        /* Essay Styles */
+        .essay-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .essay-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Arrange Styles */
+        .arrange-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .arrange-box, .words-box {
+            min-height: 60px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .arrange-box {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+
+        .word-chip {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.1s;
+        }
+
+        .word-chip:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-left: 4px solid #1e88e5;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .explanation-box.correct { background-color: #e8f5e9; border-left-color: var(--success-color); }
+        .explanation-box.wrong { background-color: #ffebee; border-left-color: var(--error-color); }
+
+        .footer-section {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:hover { background-color: var(--btn-hover); }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* Results */
+        .result-section {
+            text-align: center;
+            display: none;
+        }
+
+        .result-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .score-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="quiz-header">
+        <h1>LATIHAN SOAL HSK 1 </h1>
+        <p>BAB 4-7</p>
+        <div class="author-tag">by Agung Cahyono</div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div id="quiz-game">
+        <div class="question-section">
+            <span class="badge-type" id="question-badge">Memuat Soal...</span>
+            <div class="question-text" id="question">Loading...</div>
+            <div class="pinyin-text" id="pinyin"></div>
+        </div>
+
+        <!-- Container Pilihan Ganda -->
+        <div class="options-list" id="mcq-container"></div>
+
+        <!-- Container Esai -->
+        <div id="essay-container" style="display: none;">
+            <input type="text" id="essay-input" class="essay-input" placeholder="Ketik jawabanmu dalam Hanzi di sini..." autocomplete="off">
+        </div>
+
+        <!-- Container Susun Kalimat -->
+        <div id="arrange-container" class="arrange-area" style="display: none;">
+            <p style="font-size: 12px; color: var(--secondary-color);">Klik kata di bawah untuk menyusun kalimat:</p>
+            <div id="arrange-box" class="arrange-box"></div>
+            <p style="font-size: 12px; color: var(--secondary-color);">Pilihan Kata:</p>
+            <div id="words-box" class="words-box"></div>
+        </div>
+
+        <div class="explanation-box" id="explanation"></div>
+
+        <div class="footer-section">
+            <button class="btn" id="check-button" style="display: none;">Cek Jawaban</button>
+            <button class="btn" id="next-button" style="display: none;">Selanjutnya</button>
+        </div>
+    </div>
+
+    <div class="result-section" id="result-area">
+        <h2>Evaluasi 100 Nomor Selesai!</h2>
+        <div class="score-box" id="score-text"></div>
+        <p id="feedback-text" style="margin-bottom: 25px; color: var(--secondary-color); font-weight: 500;"></p>
+        <button class="btn" onclick="restartQuiz()">Ulangi Kuis (Soal Diacak Kembali)</button>
+    </div>
+</div>
+
+<script>
+    // 1. Core Handcrafted Base Questions (Dari Data Autentik Bab Pelajaran)
+    const baseQuestions = [
+        {
+            type: "mcq",
+            question: "Jika seseorang langsung berkata '我的钥匙呢？' tanpa ada obrolan basa-basi sebelumnya, apa fungsi partikel 呢 di sana?",
+            pinyin: "Analisis fungsi kontekstual partikel 呢 (ne).",
+            options: [
+                "Menanyakan balik untuk menghindari pengulangan kalimat.",
+                "Menanyakan lokasi atau keberadaan objek (artinya 'di mana?').",
+                "Menunjukkan bahwa suatu tindakan sedang berlangsung.",
+                "Melunakkan nada tanya agar terkesan lebih ramah."
+            ],
+            answer: 1, 
+            explanation: "<b>Jawaban Benar: Menanyakan lokasi atau keberadaan objek (artinya 'di mana?')</b><br>Tanpa konteks pembicaraan sebelumnya, pola [Benda + 呢？] otomatis bermakna mencari lokasi benda tersebut secara singkat, setara dengan 在哪里 (zài nǎlǐ)."
+        },
+        {
+            type: "mcq",
+            question: "Kapan kita wajib memilih kata tanya 几 (jǐ) daripada menggunakan kata 多少 (duōshao)?",
+            pinyin: "Perbedaan dasar kata tanya jumlah 几 vs 多少.",
+            options: [
+                "Saat menanyakan total nominal harga barang bebas.",
+                "Saat memperkirakan jumlah bernilai kecil (biasanya < 10) dan wajib diikuti kata penggolong.",
+                "Saat menanyakan total populasi jumlah siswa satu sekolah.",
+                "Saat kata tanya langsung digabungkan dengan kata sifat dimensi."
+            ],
+            answer: 1, 
+            explanation: "<b>Jawaban Benar: Saat memperkirakan jumlah bernilai kecil (biasanya < 10) dan wajib diikuti kata penggolong.</b><br>Kata 几 (jǐ) dipakai untuk perkiraan kuantitas kecil (< 10) dan posisinya wajib dilekatkan dengan kata penggolong (measure word) sebelum objek benda."
+        },
+        {
+            type: "mcq",
+            question: "Manakah struktur kalimat berikut ini yang dianggap salah secara tata bahasa Mandarin?",
+            pinyin: "Batasan sintaksis penggunaan kata 想 (xiǎng).",
+            options: [
+                "我想买新手机。",
+                "我要买新手机。",
+                "我要一杯咖啡。",
+                "我想一杯咖啡。"
+            ],
+            answer: 3, 
+            explanation: "<b>Jawaban Benar: 我想一杯咖啡。 (SALAH)</b><br>Kata 想 (xiǎng) hanya boleh diikuti oleh Kata Kerja (Verb). Dia dilarang keras langsung bertemu dengan objek Kata Benda (Noun) seperti 一杯咖啡. Gunakan 要 (yào) jika objek langsung berupa benda."
+        },
+        {
+            type: "mcq",
+            question: "Manakah kalimat berikut yang tepat menggunakan kata penggolong keluarga inti serumah?",
+            pinyin: "Penggunaan partikel penggolong 口 (kǒu).",
+            options: [
+                "我家有四个人。",
+                "我家有四个口人。",
+                "我家有四口人。",
+                "我家有几个人。"
+            ],
+            answer: 2, 
+            explanation: "<b>Jawaban Benar: 我家有四口人。</b><br>Kata penggolong 口 (kǒu) dikhususkan hanya untuk menghitung jumlah kuantitas anggota keluarga inti yang hidup bersama dalam satu atap rumah."
+        },
+        {
+            type: "mcq",
+            question: "Dalam percakapan kasir lisan, bagaimanakah cara membaca angka nominal harga tunai ¥ 6.05 yang tepat?",
+            pinyin: "Aturan pelafalan angka desimal nol (零) mata uang Renminbi.",
+            options: [
+                "六块五 (liù kuài wǔ)",
+                "六块五毛 (liù kuài wǔ máo)",
+                "六块零五分 (liù kuài líng wǔ fēn)",
+                "六块零五 (liù kuài líng wǔ)"
+            ],
+            answer: 2, 
+            explanation: "<b>Jawaban Benar: 六块零五分 (liù kuài líng wǔ fēn)</b><br>Bila digit desimal pertama bernilai kosong (0) namun desimal kedua (fēn) ada nilainya, desimal nol tersebut wajib disuarakan sebagai 零 (líng)."
+        }
+    ];
+
+    // 2. Automated Smart Generator Engine (Membuat Total Tepat 100 Soal Variatif)
+    function generate100Questions() {
+        let listSoal = [...baseQuestions];
+        
+        // Kumpulan Kosakata dari File Materi Bab 5, 6 & 呢
+        const barangPool = [
+            {hz: "苹果", py: "píngguǒ", id: "apel"},
+            {hz: "咖啡", py: "kāfēi", id: "kopi"},
+            {hz: "手机", py: "shǒujī", id: "HP"},
+            {hz: "衣服", py: "yīfu", id: "baju"},
+            {hz: "杯子", py: "bēizi", id: "gelas"},
+            {hz: "钥匙", py: "yàoshi", id: "kunci"}
+        ];
+
+        const uangPool = [
+            {num: "¥ 8.50", hz: "八块五毛", py: "bā kuài wǔ máo"},
+            {num: "¥ 24.30", hz: "二十四块三", py: "èrshí sì kuài sān"},
+            {num: "¥ 15.65", hz: "十五块六毛五分", py: "shíwǔ kuài liù máo wǔ fēn"},
+            {num: "¥ 5.00", hz: "五块", py: "wǔ kuài"},
+            {num: "¥ 120.00", hz: "一百二十块", py: "yìbǎi èrshí kuài"},
+            {num: "¥ 10.02", hz: "十块零二分", py: "shí kuài líng èr fēn"}
+        ];
+
+        const orangAksiPool = [
+            {org: "妈妈", ak: "睡觉", pyO: "Māma", pyA: "shuìjiào", idO: "Ibu", idA: "tidur"},
+            {org: "老师", ak: "开会", pyO: "Lǎoshī", pyA: "kāihuì", idO: "Guru", idA: "rapat"},
+            {org: "学生", ak: "做作业", pyO: "Xuéshēng", pyA: "zuò zuòyè", idO: "Murid", idA: "mengerjakan PR"},
+            {org: "他", ak: "做作业", pyO: "Tā", pyA: "zuò zuòyè", idO: "Dia", idA: "mengerjakan PR"}
+        ];
+
+        let indexLoop = 0;
+        while (listSoal.length < 100) {
+            let b = barangPool[indexLoop % barangPool.length];
+            let u = uangPool[indexLoop % uangPool.length];
+            let oa = orangAksiPool[indexLoop % orangAksiPool.length];
+
+            // Varian Tipe 1: Susun Kalimat - Continuous Tense (呢)
+            listSoal.push({
+                type: "arrange",
+                question: `Susun kata acak menjadi kalimat penekanan aksi sedang berlangsung: "${oa.idO} sedang ${oa.idA} nih."`,
+                pinyin: `Penerapan rumus: Subjek + 在 + Kata Kerja + 呢`,
+                words: [oa.ak, "在", "呢", oa.org],
+                answer: `${oa.org}在${oa.ak}呢`,
+                explanation: `<b>Susunan Benar: ${oa.org}在${oa.ak}呢</b><br>Struktur Continuous Tense menggunakan partikel modal 呢 di akhir kalimat untuk menegaskan aksi berlangsung.`
+            });
+            if (listSoal.length >= 100) break;
+
+            // Varian Tipe 2: Esai - Tanya Harga Barang
+            listSoal.push({
+                type: "essay",
+                question: `Terjemahkan kalimat tanya berikut ke dalam Hanzi: <br><b>Berapa harga ${b.id} ini?</b>`,
+                pinyin: `Gunakan kata penunjuk 这个 (zhège) dan kata tanya harga.`,
+                acceptedAnswers: [`这个${b.hz}多少钱`],
+                explanation: `<b>Jawaban Utama: 这个${b.hz}多少钱</b><br>Mengikuti pola standard interogatif harga barang: [Barang] + 多少钱.`
+            });
+            if (listSoal.length >= 100) break;
+
+            // Varian Tipe 3: MCQ - Membaca Lisan RMB
+            listSoal.push({
+                type: "mcq",
+                question: `Bagaimanakah bunyi pembacaan lisan formal/kasual dari nominal mata uang <b>${u.num}</b>?`,
+                pinyin: `Sistem konversi mata uang lisan Renminbi.`,
+                options: [u.hz, `${u.hz}元`, `二${u.hz}`, `两${u.hz}钱`],
+                answer: 0,
+                explanation: `<b>Jawaban Benar: ${u.hz}</b><br>Berdasarkan modul lisan, penyebutan menggunakan satuan kuài (块) dan máo (毛) atau fēn (分) sesuai urutan digit desimal.`
+            });
+            if (listSoal.length >= 100) break;
+
+            // Varian Tipe 4: Esai - Aturan Angka 2 (两 vs 二)
+            listSoal.push({
+                type: "essay",
+                question: `Terjemahkan ke dalam karakter Hanzi dengan aturan angka dua yang pas: <br><b>Dua buah ${b.id}</b>`,
+                pinyin: `Gunakan kata penggolong umum 个 (gè).`,
+                acceptedAnswers: [`两个${b.hz}`],
+                explanation: `<b>Jawaban Utama: 两个${b.hz}</b><br>Wajib menggunakan kata 两 (liǎng) dan bukan 二 (èr) karena angka dua langsung melekat dengan kata bantu bilangan/measure word.`
+            });
+            if (listSoal.length >= 100) break;
+
+            // Varian Tipe 5: Susun Kalimat - Lokasi Benda (呢)
+            listSoal.push({
+                type: "arrange",
+                question: `Susun kata acak menjadi kalimat tanya lokasi singkat: "Di mana ${b.id} saya?"`,
+                pinyin: `Rumus eksklusif partikel 呢 untuk mendeteksi lokasi keberadaan benda.`,
+                words: ["呢", "的", "我", b.hz],
+                answer: `我的${b.hz}呢`,
+                explanation: `<b>Susunan Benar: 我的${b.hz}呢</b><br>Pola [Objek + 呢？] tanpa konteks awal otomatis mempersingkat pertanyaan 'di mana?' (在哪里).`
+            });
+            if (listSoal.length >= 100) break;
+
+            // Varian Tipe 6: MCQ - Tanya Usia Dimensi Sifat
+            listSoal.push({
+                type: "mcq",
+                question: `Apakah arti harfiah dari kombinasi ekspresi tanya dimensi sifat '你多大？ (Nǐ duō dà?)'?`,
+                pinyin: `Pengembangan fungsi karakter 多 (duō) + Kata Sifat (Adjective).`,
+                options: [
+                    "Berapa usiamu? (Seberapa besar usiamu?)",
+                    "Berapa tinggimu? (Seberapa tinggi dirimu?)",
+                    "Ada berapa banyak orang di rumahmu?",
+                    "Berapa total seluruh harga barang ini?"
+                ],
+                answer: 0,
+                explanation: `<b>Jawaban Benar: Berapa usiamu? (Seberapa besar usiamu?)</b><br>Jika kata 多 (duō) ditempelkan langsung dengan kata sifat seperti 大 (besar) atau 高 (tinggi), artinya bertransformasi menanyakan dimensi.`
+            });
+            if (listSoal.length >= 100) break;
+
+            // Varian Tipe 7: Esai - Total Harga Kasir
+            listSoal.push({
+                type: "essay",
+                question: `Terjemahkan ungkapan total belanja kasir berikut ke dalam Hanzi: <br><b>Total semuanya berapa uang?</b>`,
+                pinyin: `Gunakan kata 一共 (yígòng).`,
+                acceptedAnswers: ["一共多少钱"],
+                explanation: `<b>Jawaban Utama: 一共多少钱</b><br>Kombinasi kata total keseluruhan 一共 disandingkan dengan formula tanya 多少钱.`
+            });
+
+            indexLoop++;
+        }
+        return listSoal;
+    }
+
+    let rawQuestions = generate100Questions();
+    let shuffledQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // DOM Elements
+    const questionBadge = document.getElementById('question-badge');
+    const questionElement = document.getElementById('question');
+    const pinyinElement = document.getElementById('pinyin');
+    const explanationElement = document.getElementById('explanation');
+    const nextButton = document.getElementById('next-button');
+    const checkButton = document.getElementById('check-button');
+    const progressElement = document.getElementById('progress');
+    
+    // Container Elements
+    const mcqContainer = document.getElementById('mcq-container');
+    const essayContainer = document.getElementById('essay-container');
+    const essayInput = document.getElementById('essay-input');
+    const arrangeContainer = document.getElementById('arrange-container');
+    const arrangeBox = document.getElementById('arrange-box');
+    const wordsBox = document.getElementById('words-box');
+    
+    let currentArrangeWords = [];
+    let currentSelectedWords = [];
+
+    // Shuffle Function
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // Filter spasi & tanda baca agar adil
+    function cleanPunctuation(str) {
+        return str.replace(/[\s，。？?！!]/g, '');
+    }
+
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        shuffledQuestions = shuffle([...rawQuestions]);
+        document.getElementById('quiz-game').style.display = 'block';
+        document.getElementById('result-area').style.display = 'none';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        resetState();
+        let q = shuffledQuestions[currentQuestionIndex];
+        
+        // Progress Bar
+        progressElement.style.width = ((currentQuestionIndex) / shuffledQuestions.length) * 100 + '%';
+        questionElement.innerHTML = q.question;
+        pinyinElement.innerText = q.pinyin || "";
+
+        // Label Badge Dinamis + Indikator Nomor
+        let typeText = q.type === "mcq" ? "Pilihan Ganda" : q.type === "arrange" ? "Susun Kalimat" : "Esai Terjemahan";
+        questionBadge.innerText = `${typeText} | Nomor ${currentQuestionIndex + 1} dari 100`;
+
+        if (q.type === "mcq") {
+            mcqContainer.style.display = 'flex';
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = option;
+                btn.classList.add('option-btn');
+                btn.addEventListener('click', () => selectMcqAnswer(index, btn));
+                mcqContainer.appendChild(btn);
+            });
+        } 
+        else if (q.type === "arrange") {
+            arrangeContainer.style.display = 'flex';
+            checkButton.style.display = 'block';
+            currentArrangeWords = shuffle([...q.words]);
+            currentSelectedWords = [];
+            renderArrangeUI();
+        } 
+        else if (q.type === "essay") {
+            essayContainer.style.display = 'block';
+            checkButton.style.display = 'block';
+            essayInput.value = "";
+            essayInput.focus();
+        }
+    }
+
+    function resetState() {
+        nextButton.style.display = 'none';
+        checkButton.style.display = 'none';
+        explanationElement.style.display = 'none';
+        explanationElement.className = "explanation-box";
+        mcqContainer.style.display = 'none';
+        essayContainer.style.display = 'none';
+        arrangeContainer.style.display = 'none';
+        mcqContainer.innerHTML = '';
+        essayInput.disabled = false;
+    }
+
+    function selectMcqAnswer(selectedIndex, clickedButton) {
+        const q = shuffledQuestions[currentQuestionIndex];
+        const allButtons = mcqContainer.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => btn.disabled = true);
+
+        if (selectedIndex === q.answer) {
+            clickedButton.classList.add('correct');
+            showExplanation("Benar!", q.explanation, "correct");
+            score++;
+        } else {
+            clickedButton.classList.add('wrong');
+            allButtons[q.answer].classList.add('correct');
+            showExplanation("Salah.", q.explanation, "wrong");
+        }
+        nextButton.style.display = 'block';
+    }
+
+    function renderArrangeUI() {
+        arrangeBox.innerHTML = '';
+        wordsBox.innerHTML = '';
+
+        currentSelectedWords.forEach((word, index) => {
+            let chip = document.createElement('div');
+            chip.className = 'word-chip';
+            chip.innerText = word;
+            chip.onclick = () => {
+                currentSelectedWords.splice(index, 1);
+                currentArrangeWords.push(word);
+                renderArrangeUI();
+            };
+            arrangeBox.appendChild(chip);
+        });
+
+        currentArrangeWords.forEach((word, index) => {
+            let chip = document.createElement('div');
+            chip.className = 'word-chip';
+            chip.innerText = word;
+            chip.onclick = () => {
+                currentArrangeWords.splice(index, 1);
+                currentSelectedWords.push(word);
+                renderArrangeUI();
+            };
+            wordsBox.appendChild(chip);
+        });
+    }
+
+    checkButton.addEventListener('click', () => {
+        const q = shuffledQuestions[currentQuestionIndex];
+        checkButton.style.display = 'none';
+        
+        if (q.type === "arrange") {
+            const userAnswer = currentSelectedWords.join("");
+            if (cleanPunctuation(userAnswer) === cleanPunctuation(q.answer)) {
+                showExplanation("Benar!", q.explanation, "correct");
+                score++;
+            } else {
+                showExplanation("Salah.", q.explanation, "wrong");
+            }
+            arrangeContainer.style.pointerEvents = 'none';
+        } 
+        else if (q.type === "essay") {
+            const userRawInput = essayInput.value.trim();
+            const cleanedUserInput = cleanPunctuation(userRawInput);
+            essayInput.disabled = true;
+            
+            const isMatch = q.acceptedAnswers.some(ans => cleanPunctuation(ans) === cleanedUserInput);
+            
+            if (isMatch && cleanedUserInput !== "") {
+                showExplanation("Benar!", q.explanation, "correct");
+                score++;
+            } else {
+                showExplanation("Salah.", q.explanation, "wrong");
+            }
+        }
+        nextButton.style.display = 'block';
+    });
+
+    function showExplanation(title, text, status) {
+        explanationElement.innerHTML = `<strong>${title}</strong><br>${text}`;
+        explanationElement.className = `explanation-box ${status}`;
+        explanationElement.style.display = 'block';
+    }
+
+    nextButton.addEventListener('click', () => {
+        arrangeContainer.style.pointerEvents = 'auto'; 
+        currentQuestionIndex++;
+        if (currentQuestionIndex < shuffledQuestions.length) {
+            showQuestion();
+        } else {
+            showResults();
+        }
+    });
+
+    function showResults() {
+        progressElement.style.width = '100%';
+        document.getElementById('quiz-game').style.display = 'none';
+        const resultArea = document.getElementById('result-area');
+        resultArea.style.display = 'block';
+        
+        const total = shuffledQuestions.length;
+        const salah = total - score;
+        const percentage = Math.round((score / total) * 100);
+
+        document.getElementById('score-text').innerHTML = `
+            Total Soal Dikerjakan : <strong>${total} Nomor</strong><br>
+            Jumlah Benar : <span style="color: var(--success-color); font-weight: bold;">${score}</span> Soal<br>
+            Jumlah Salah : <span style="color: var(--error-color); font-weight: bold;">${salah}</span> Soal<br>
+            Akurasi Skor Akhir : <span style="color: var(--primary-color); font-weight: bold;">${percentage}%</span>
+        `;
+        
+        const feedbackText = document.getElementById('feedback-text');
+        if (percentage === 100) {
+            feedbackText.innerText = "Luar biasa sempurna tanpa cela! 100 nomor berhasil Anda babat habis. Kemampuan grammar Bab 5, Bab 6, dan partikel 2 Anda berada di level Master! 🌟";
+        } else if (percentage >= 75) {
+            feedbackText.innerText = "Sangat Kuat! Anda berhasil mempertahankan konsentrasi fokus tinggi melewati rintangan marathon 100 nomor soal dengan hasil memuaskan. 👍";
+        } else {
+            feedbackText.innerText = "Perjuangan yang bagus! Melintasi ujian ketahanan 100 soal bukanlah hal mudah. Mari ulangi kuis untuk menajamkan memori Hanzi Anda! 💪";
+        }
+    }
+
+    function restartQuiz() {
+        startQuiz();
+    }
+
+    // Auto-Start
+    startQuiz();
+</script>
+
+</body>
+</html>
