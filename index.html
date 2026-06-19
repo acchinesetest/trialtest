@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latihan Soal - By Agung Cahyono</title>
+    <title>Master Kuis Interaktif Mandarin (100 Soal) - Agung Cahyono</title>
     <style>
         :root {
             --primary-color: #1F4E78;
@@ -40,6 +40,7 @@
             width: 100%;
             max-width: 650px;
             padding: 30px;
+            display: none;
         }
 
         .quiz-header {
@@ -113,7 +114,6 @@
             margin-bottom: 20px;
         }
 
-        /* MCQ Styles */
         .options-list {
             list-style: none;
             display: flex;
@@ -152,7 +152,6 @@
             font-weight: bold;
         }
 
-        /* Essay Styles */
         .essay-input {
             width: 100%;
             padding: 15px;
@@ -167,7 +166,6 @@
             border-color: var(--primary-color);
         }
 
-        /* Arrange Styles */
         .arrange-area {
             display: flex;
             flex-direction: column;
@@ -241,7 +239,6 @@
         .btn:hover { background-color: var(--btn-hover); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* Results */
         .result-section {
             text-align: center;
             display: none;
@@ -265,10 +262,10 @@
 </head>
 <body>
 
-<div class="quiz-container">
+<div class="quiz-container" id="main-quiz-container">
     <div class="quiz-header">
-        <h1>LATIHAN SOAL HSK 1 </h1>
-        <p>BAB 4-7</p>
+        <h1>Master Kuis Mandarin Super Big Bank</h1>
+        <p>Materi Komprehensif: Kosakata Dasar &amp; Tata Bahasa HSK 1</p>
         <div class="author-tag">by Agung Cahyono</div>
     </div>
 
@@ -283,15 +280,12 @@
             <div class="pinyin-text" id="pinyin"></div>
         </div>
 
-        <!-- Container Pilihan Ganda -->
         <div class="options-list" id="mcq-container"></div>
 
-        <!-- Container Esai -->
         <div id="essay-container" style="display: none;">
             <input type="text" id="essay-input" class="essay-input" placeholder="Ketik jawabanmu dalam Hanzi di sini..." autocomplete="off">
         </div>
 
-        <!-- Container Susun Kalimat -->
         <div id="arrange-container" class="arrange-area" style="display: none;">
             <p style="font-size: 12px; color: var(--secondary-color);">Klik kata di bawah untuk menyusun kalimat:</p>
             <div id="arrange-box" class="arrange-box"></div>
@@ -316,190 +310,168 @@
 </div>
 
 <script>
-    // 1. Core Handcrafted Base Questions (Dari Data Autentik Bab Pelajaran)
-    const baseQuestions = [
-        {
-            type: "mcq",
-            question: "Jika seseorang langsung berkata '我的钥匙呢？' tanpa ada obrolan basa-basi sebelumnya, apa fungsi partikel 呢 di sana?",
-            pinyin: "Analisis fungsi kontekstual partikel 呢 (ne).",
-            options: [
-                "Menanyakan balik untuk menghindari pengulangan kalimat.",
-                "Menanyakan lokasi atau keberadaan objek (artinya 'di mana?').",
-                "Menunjukkan bahwa suatu tindakan sedang berlangsung.",
-                "Melunakkan nada tanya agar terkesan lebih ramah."
-            ],
-            answer: 1, 
-            explanation: "<b>Jawaban Benar: Menanyakan lokasi atau keberadaan objek (artinya 'di mana?')</b><br>Tanpa konteks pembicaraan sebelumnya, pola [Benda + 呢？] otomatis bermakna mencari lokasi benda tersebut secara singkat, setara dengan 在哪里 (zài nǎlǐ)."
-        },
-        {
-            type: "mcq",
-            question: "Kapan kita wajib memilih kata tanya 几 (jǐ) daripada menggunakan kata 多少 (duōshao)?",
-            pinyin: "Perbedaan dasar kata tanya jumlah 几 vs 多少.",
-            options: [
-                "Saat menanyakan total nominal harga barang bebas.",
-                "Saat memperkirakan jumlah bernilai kecil (biasanya < 10) dan wajib diikuti kata penggolong.",
-                "Saat menanyakan total populasi jumlah siswa satu sekolah.",
-                "Saat kata tanya langsung digabungkan dengan kata sifat dimensi."
-            ],
-            answer: 1, 
-            explanation: "<b>Jawaban Benar: Saat memperkirakan jumlah bernilai kecil (biasanya < 10) dan wajib diikuti kata penggolong.</b><br>Kata 几 (jǐ) dipakai untuk perkiraan kuantitas kecil (< 10) dan posisinya wajib dilekatkan dengan kata penggolong (measure word) sebelum objek benda."
-        },
-        {
-            type: "mcq",
-            question: "Manakah struktur kalimat berikut ini yang dianggap salah secara tata bahasa Mandarin?",
-            pinyin: "Batasan sintaksis penggunaan kata 想 (xiǎng).",
-            options: [
-                "我想买新手机。",
-                "我要买新手机。",
-                "我要一杯咖啡。",
-                "我想一杯咖啡。"
-            ],
-            answer: 3, 
-            explanation: "<b>Jawaban Benar: 我想一杯咖啡。 (SALAH)</b><br>Kata 想 (xiǎng) hanya boleh diikuti oleh Kata Kerja (Verb). Dia dilarang keras langsung bertemu dengan objek Kata Benda (Noun) seperti 一杯咖啡. Gunakan 要 (yào) jika objek langsung berupa benda."
-        },
-        {
-            type: "mcq",
-            question: "Manakah kalimat berikut yang tepat menggunakan kata penggolong keluarga inti serumah?",
-            pinyin: "Penggunaan partikel penggolong 口 (kǒu).",
-            options: [
-                "我家有四个人。",
-                "我家有四个口人。",
-                "我家有四口人。",
-                "我家有几个人。"
-            ],
-            answer: 2, 
-            explanation: "<b>Jawaban Benar: 我家有四口人。</b><br>Kata penggolong 口 (kǒu) dikhususkan hanya untuk menghitung jumlah kuantitas anggota keluarga inti yang hidup bersama dalam satu atap rumah."
-        },
-        {
-            type: "mcq",
-            question: "Dalam percakapan kasir lisan, bagaimanakah cara membaca angka nominal harga tunai ¥ 6.05 yang tepat?",
-            pinyin: "Aturan pelafalan angka desimal nol (零) mata uang Renminbi.",
-            options: [
-                "六块五 (liù kuài wǔ)",
-                "六块五毛 (liù kuài wǔ máo)",
-                "六块零五分 (liù kuài líng wǔ fēn)",
-                "六块零五 (liù kuài líng wǔ)"
-            ],
-            answer: 2, 
-            explanation: "<b>Jawaban Benar: 六块零五分 (liù kuài líng wǔ fēn)</b><br>Bila digit desimal pertama bernilai kosong (0) namun desimal kedua (fēn) ada nilainya, desimal nol tersebut wajib disuarakan sebagai 零 (líng)."
+    const API_URL = "https://sheetdb.io/api/v1/kqbloih2ovz7u"; 
+
+    // --- ANTALISA KEAMANAN & VALIDASI PERANGKAT (ANTI-SHARE) ---
+    async function validasiAkses() {
+        let deviceId = localStorage.getItem("quiz_device_token");
+        if (!deviceId) {
+            deviceId = "DEV-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            localStorage.setItem("quiz_device_token", deviceId);
         }
-    ];
 
-    // 2. Automated Smart Generator Engine (Membuat Total Tepat 100 Soal Variatif)
+        let inputKode = prompt("Latihan Soal HSK 1.\nMasukkan Kode Akses Unik Anda:");
+        if (!inputKode) {
+            blokirAkses("Kode akses wajib diisi!");
+            return;
+        }
+        inputKode = inputKode.trim().toUpperCase();
+
+        try {
+            let response = await fetch(`${API_URL}/search?kode=${inputKode}`);
+            let data = await response.json();
+
+            if (!data || data.length === 0) {
+                blokirAkses("Kode Akses Tidak Valid / Tidak Terdaftar!");
+                return;
+            }
+
+            let dataKode = data[0];
+
+            if (!dataKode.status || dataKode.status === "") {
+                await fetch(`${API_URL}/kode/${inputKode}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ "status": "used", "device_id": deviceId })
+                });
+                alert("Aktivasi Sukses! Kode unik ini sekarang resmi terkunci di perangkat Anda.");
+                bukaKuis();
+                return;
+            }
+
+            if (dataKode.status === "used") {
+                if (dataKode.device_id === deviceId) {
+                    bukaKuis(); 
+                } else {
+                    blokirAkses("Gagal! Kode akses ini sudah hangus / digunakan di perangkat lain.");
+                }
+            }
+
+        } catch (error) {
+            blokirAkses("Gagal terhubung ke server validasi database. Periksa baris 1 Google Sheets Anda.");
+        }
+    }
+
+    function blokirAkses(pesan) {
+        alert(pesan);
+        document.body.innerHTML = `
+            <div style="text-align:center; margin-top:100px; font-family:sans-serif; padding:20px;">
+                <h2 style="color:#c62828;">Akses Ditolak 🔒</h2>
+                <p style="margin: 15px 0; font-size:16px;">${pesan}</p>
+                <p style="color:#595959; font-size:14px;">Satu kode akses eksklusif hanya berlaku untuk satu perangkat HP/Laptop.</p>
+            </div>
+        `;
+    }
+
+    function bukaKuis() {
+        document.getElementById('main-quiz-container').style.display = 'block';
+        startQuiz();
+    }
+
+    // --- ENGINE GENERATOR JAUH LEBIH BERVARIASI (ANTI-MONOTON) ---
     function generate100Questions() {
-        let listSoal = [...baseQuestions];
-        
-        // Kumpulan Kosakata dari File Materi Bab 5, 6 & 呢
-        const barangPool = [
-            {hz: "苹果", py: "píngguǒ", id: "apel"},
-            {hz: "咖啡", py: "kāfēi", id: "kopi"},
-            {hz: "手机", py: "shǒujī", id: "HP"},
-            {hz: "衣服", py: "yīfu", id: "baju"},
-            {hz: "杯子", py: "bēizi", id: "gelas"},
-            {hz: "钥匙", py: "yàoshi", id: "kunci"}
+        let listSoal = [];
+
+        // 1. BANK SOAL ESAI (TERJEMAHAN HANZI) - VARIATIF & FUNGSIONAL
+        const masterEssay = [
+            { q: "Terjemahkan ke Hanzi: <br><b>Siapa nama kamu?</b>", p: "Menanyakan identitas nama.", a: ["你叫什么名字", "你叫什么名字？"], e: "<b>Jawaban: 你叫什么名字？</b> (Nǐ jiào shénme míngzi?)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Sekarang jam 2 siang.</b>", p: "Perhatikan aturan jam untuk angka 2.", a: ["现在下午两点", "现在下午两点。"], e: "<b>Jawaban: 现在下午两点。</b> (Xiànzài xiàwǔ liǎng diǎn.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Saya bukan orang Amerika.</b>", p: "Kalimat sangkalan menggunakan 不是.", a: ["我不是美国人", "我不是美国人。"], e: "<b>Jawaban: 我不是美国人。</b> (Wǒ bú shì Měiguórén.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Kamu bisa masak masakan Cina tidak?</b>", p: "Menggunakan kata bantu modal 会.", a: ["你会做中国菜吗", "你会做中国菜吗？"], e: "<b>Jawaban: 你会做中国菜吗？</b> (Nǐ huì zuò Zhōngguócài ma?)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Hari ini hari apa? (Senin-Minggu)</b>", p: "Menanyakan nama hari.", a: ["今天星期几", "今天星期几？"], e: "<b>Jawaban: 今天星期几？</b> (Jīntiān xīngqījǐ?)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Dia (laki-laki) adalah teman saya.</b>", p: "Kepemilikan menggunakan 的.", a: ["他是我的朋友", "他是我的朋友。"], e: "<b>Jawaban: 他是我的朋友。</b> (Tā tissue wǒ de péngyou.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Saya suka minum teh hangat.</b>", p: "Kata kerja 喜欢 (suka) dan 喝 (minum).", a: ["我喜欢喝茶", "我喜欢喝茶。"], e: "<b>Jawaban: 我喜欢喝茶。</b> (Wǒ xǐhuan hē chá.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Kemarin hujan deras.</b>", p: "Kosakata cuaca lampau.", a: ["昨天下大雨", "昨天下雨了", "昨天下大雨了"], e: "<b>Jawaban: 昨天下大雨。</b> (Zuótiān xià dà yǔ.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Kucing saya ada di atas kursi.</b>", p: "Struktur penunjuk arah lokasi (...上面).", a: ["我的猫在椅子上", "我的猫在椅子上面"], e: "<b>Jawaban: 我的猫在椅子上面。</b> (Wǒ de māo zài yǐzi shàngmiàn.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Kamu pergi ke sekolah jam berapa?</b>", p: "Waktu diletakkan sebelum kata kerja.", a: ["你几点去学校", "你几点去学校？"], e: "<b>Jawaban: 你几点去学校？</b> (Nǐ jǐ diǎn qù xuéxiào?)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Di dalam toko buku ada banyak buku.</b>", p: "Kalimat keberadaan benda menggunakan 有.", a: ["书店有很多书", "书店里有很多书"], e: "<b>Jawaban: 书店有很多书。</b> (Shūdiàn yǒu hěn duō shū.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Anak perempuan saya tahun ini umur 6 tahun.</b>", p: "Kosakata 女儿 (nǚ'ér) dan 岁 (suì).", a: ["我的女儿今年六岁", "我的女儿今年六岁。"], e: "<b>Jawaban: 我的女儿今年六岁。</b>" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Berapa nomor telepon kamu?</b>", p: "Menanyakan deretan nomor panjang menggunakan 多少.", a: ["你的电话号码是多少", "你的电话号码是多少？"], e: "<b>Jawaban: 你的电话号码是多少？</b>" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Silakan minum air putih.</b>", p: "Kalimat perintah sopan menggunakan 请.", a: ["请喝水", "请喝水。"], e: "<b>Jawaban: 请喝水。</b> (Qǐng hē shuǐ.)" },
+            { q: "Terjemahkan ke Hanzi: <br><b>Rumah saya sangat besar.</b>", p: "Kata sifat langsung diawali 很 (tidak memakai 是).", a: ["我的家很大", "我的家很大。"], e: "<b>Jawaban: 我的家很大。</b> (Wǒ de jiā hěn dà.)" }
         ];
 
-        const uangPool = [
-            {num: "¥ 8.50", hz: "八块五毛", py: "bā kuài wǔ máo"},
-            {num: "¥ 24.30", hz: "二十四块三", py: "èrshí sì kuài sān"},
-            {num: "¥ 15.65", hz: "十五块六毛五分", py: "shíwǔ kuài liù máo wǔ fēn"},
-            {num: "¥ 5.00", hz: "五块", py: "wǔ kuài"},
-            {num: "¥ 120.00", hz: "一百二十块", py: "yìbǎi èrshí kuài"},
-            {num: "¥ 10.02", hz: "十块零二分", py: "shí kuài líng èr fēn"}
+        // Masukkan semua esai variatif ke list utama
+        masterEssay.forEach(item => {
+            listSoal.push({ type: "essay", question: item.q, pinyin: item.p, acceptedAnswers: item.a, explanation: item.e });
+        });
+
+        // 2. BANK SOAL PILIHAN GANDA & SUSUN KALIMAT YANG DI-GENERATE OTOMATIS
+        const subjekPool = ["爸爸", "妈妈", "老师", "学生", "医生", "我的朋友"];
+        const aksiPool = [
+            { hz: "去医院看病", id: "pergi ke rumah sakit untuk berobat", py: "qù yīyuàn kànbìng" },
+            { hz: "在商场买衣服", id: "membeli baju di mal", py: "zài shāngchǎng mǎi yīfú" },
+            { hz: "坐出租车去 bǎn dǎ jiǎng", id: "naik taksi pergi ke bandara", hzReal: "坐出租车去机场", py: "zuò chūzūchē qù jīchǎng" },
+            { hz: "在家里学汉语", id: "belajar bahasa Mandarin di rumah", py: "zài jiālǐ xué Hànyǔ" },
+            { hz: "听中国音乐", id: "mendengarkan musik Cina", py: "tīng Zhōngguó yīnyuè" }
+        ];
+        const kataTanyaPool = [
+            { q: "Kapan kita wajib menggunakan kata tanya 几 (jǐ) dibanding 多少 (duōshao)?", o: ["Untuk perkiraan jumlah kecil (<10) dan wajib diikuti kata penggolong", "Untuk nominal harga uang", "Untuk nomor telepon genggam", "Bebas digunakan kapan saja"], a: 0, ex: "几 (jǐ) khusus untuk angka kecil di bawah sepuluh dan harus ada kata penggolong (量词)." },
+            { q: "Manakah penggunaan struktur kata 想 (xiǎng) yang SALAH di bawah ini?", o: ["我想买新手机。", "我要一杯咖啡。", "我想一杯咖啡。", "我不想去学校。"], a: 2, ex: "想 harus diikuti kata kerja. Tidak boleh langsung bertemu objek benda tanpa predikat kerja." },
+            { q: "Apa fungsi partikel 呢 (ne) jika tiba-tiba diucapkan tanpa ada obrolan pembuka sebelumnya?", o: ["Menunjukkan aksi sedang berjalan", "Menanyakan keberadaan/lokasi objek (artinya 'di mana?')", "Menghaluskan perintah", "Menyatakan masa lalu"], a: 1, ex: "Pola [Benda/Orang + 呢？] langsung tanpa basa-basi berarti menanyakan posisi benda tersebut." }
         ];
 
-        const orangAksiPool = [
-            {org: "妈妈", ak: "睡觉", pyO: "Māma", pyA: "shuìjiào", idO: "Ibu", idA: "tidur"},
-            {org: "老师", ak: "开会", pyO: "Lǎoshī", pyA: "kāihuì", idO: "Guru", idA: "rapat"},
-            {org: "学生", ak: "做作业", pyO: "Xuéshēng", pyA: "zuò zuòyè", idO: "Murid", idA: "mengerjakan PR"},
-            {org: "他", ak: "做作业", pyO: "Tā", pyA: "zuò zuòyè", idO: "Dia", idA: "mengerjakan PR"}
-        ];
+        // Masukkan struktur dasar MCQ
+        kataTanyaPool.forEach(item => {
+            listSoal.push({ type: "mcq", question: item.q, pinyin: "Analisis Tata Bahasa HSK 1", options: item.o, answer: item.a, explanation: item.ex });
+        });
 
-        let indexLoop = 0;
+        // Loop kreatif untuk membuat sisa soal unik hingga genap 100 nomor
+        let i = 0;
         while (listSoal.length < 100) {
-            let b = barangPool[indexLoop % barangPool.length];
-            let u = uangPool[indexLoop % uangPool.length];
-            let oa = orangAksiPool[indexLoop % orangAksiPool.length];
+            let s = subjekPool[i % subjekPool.length];
+            let a = aksiPool[i % aksiPool.length];
+            let hzAksi = a.hzReal || a.hz;
 
-            // Varian Tipe 1: Susun Kalimat - Continuous Tense (呢)
+            // Tambah tipe Susun Kalimat (Arrange) bervariasi
             listSoal.push({
                 type: "arrange",
-                question: `Susun kata acak menjadi kalimat penekanan aksi sedang berlangsung: "${oa.idO} sedang ${oa.idA} nih."`,
-                pinyin: `Penerapan rumus: Subjek + 在 + Kata Kerja + 呢`,
-                words: [oa.ak, "在", "呢", oa.org],
-                answer: `${oa.org}在${oa.ak}呢`,
-                explanation: `<b>Susunan Benar: ${oa.org}在${oa.ak}呢</b><br>Struktur Continuous Tense menggunakan partikel modal 呢 di akhir kalimat untuk menegaskan aksi berlangsung.`
+                question: `Susun kata acak menjadi kalimat yang benar: <br><b>"${s} ${a.id}."</b>`,
+                pinyin: `Target struktur: Subjek + Tempat + Kata Kerja`,
+                words: shuffle([s, ...hzAksi.match(/[\u4e00-\u9fa5]+/g) || [hzAksi]]),
+                answer: s + hzAksi,
+                explanation: `<b>Susunan yang Benar: ${s}${hzAksi}</b>`
             });
             if (listSoal.length >= 100) break;
 
-            // Varian Tipe 2: Esai - Tanya Harga Barang
-            listSoal.push({
-                type: "essay",
-                question: `Terjemahkan kalimat tanya berikut ke dalam Hanzi: <br><b>Berapa harga ${b.id} ini?</b>`,
-                pinyin: `Gunakan kata penunjuk 这个 (zhège) dan kata tanya harga.`,
-                acceptedAnswers: [`这个${b.hz}多少钱`],
-                explanation: `<b>Jawaban Utama: 这个${b.hz}多少钱</b><br>Mengikuti pola standard interogatif harga barang: [Barang] + 多少钱.`
-            });
-            if (listSoal.length >= 100) break;
-
-            // Varian Tipe 3: MCQ - Membaca Lisan RMB
+            // Tambah tipe MCQ kontekstual bervariasi
             listSoal.push({
                 type: "mcq",
-                question: `Bagaimanakah bunyi pembacaan lisan formal/kasual dari nominal mata uang <b>${u.num}</b>?`,
-                pinyin: `Sistem konversi mata uang lisan Renminbi.`,
-                options: [u.hz, `${u.hz}元`, `二${u.hz}`, `两${u.hz}钱`],
-                answer: 0,
-                explanation: `<b>Jawaban Benar: ${u.hz}</b><br>Berdasarkan modul lisan, penyebutan menggunakan satuan kuài (块) dan máo (毛) atau fēn (分) sesuai urutan digit desimal.`
-            });
-            if (listSoal.length >= 100) break;
-
-            // Varian Tipe 4: Esai - Aturan Angka 2 (两 vs 二)
-            listSoal.push({
-                type: "essay",
-                question: `Terjemahkan ke dalam karakter Hanzi dengan aturan angka dua yang pas: <br><b>Dua buah ${b.id}</b>`,
-                pinyin: `Gunakan kata penggolong umum 个 (gè).`,
-                acceptedAnswers: [`两个${b.hz}`],
-                explanation: `<b>Jawaban Utama: 两个${b.hz}</b><br>Wajib menggunakan kata 两 (liǎng) dan bukan 二 (èr) karena angka dua langsung melekat dengan kata bantu bilangan/measure word.`
-            });
-            if (listSoal.length >= 100) break;
-
-            // Varian Tipe 5: Susun Kalimat - Lokasi Benda (呢)
-            listSoal.push({
-                type: "arrange",
-                question: `Susun kata acak menjadi kalimat tanya lokasi singkat: "Di mana ${b.id} saya?"`,
-                pinyin: `Rumus eksklusif partikel 呢 untuk mendeteksi lokasi keberadaan benda.`,
-                words: ["呢", "的", "我", b.hz],
-                answer: `我的${b.hz}呢`,
-                explanation: `<b>Susunan Benar: 我的${b.hz}呢</b><br>Pola [Objek + 呢？] tanpa konteks awal otomatis mempersingkat pertanyaan 'di mana?' (在哪里).`
-            });
-            if (listSoal.length >= 100) break;
-
-            // Varian Tipe 6: MCQ - Tanya Usia Dimensi Sifat
-            listSoal.push({
-                type: "mcq",
-                question: `Apakah arti harfiah dari kombinasi ekspresi tanya dimensi sifat '你多大？ (Nǐ duō dà?)'?`,
-                pinyin: `Pengembangan fungsi karakter 多 (duō) + Kata Sifat (Adjective).`,
+                question: `Bagaimana cara menerjemahkan struktur aksi ini dengan tepat? <br><b>"${s} sedang ${a.id} nih."</b>`,
+                pinyin: `Gunakan partikel penekanan progresif (在...呢).`,
                 options: [
-                    "Berapa usiamu? (Seberapa besar usiamu?)",
-                    "Berapa tinggimu? (Seberapa tinggi dirimu?)",
-                    "Ada berapa banyak orang di rumahmu?",
-                    "Berapa total seluruh harga barang ini?"
+                    `${s}在${hzAksi}呢`,
+                    `在${hzAksi}${s}`,
+                    `${s}想${hzAksi}`,
+                    `${s}是${hzAksi}`
                 ],
                 answer: 0,
-                explanation: `<b>Jawaban Benar: Berapa usiamu? (Seberapa besar usiamu?)</b><br>Jika kata 多 (duō) ditempelkan langsung dengan kata sifat seperti 大 (besar) atau 高 (tinggi), artinya bertransformasi menanyakan dimensi.`
+                explanation: `<b>Jawaban Benar: ${s}在${hzAksi}呢</b><br>Rumus menyatakan tindakan sedang berlangsung adalah Subjek + 在 + Kata Kerja + 呢.`
             });
             if (listSoal.length >= 100) break;
 
-            // Varian Tipe 7: Esai - Total Harga Kasir
-            listSoal.push({
-                type: "essay",
-                question: `Terjemahkan ungkapan total belanja kasir berikut ke dalam Hanzi: <br><b>Total semuanya berapa uang?</b>`,
-                pinyin: `Gunakan kata 一共 (yígòng).`,
-                acceptedAnswers: ["一共多少钱"],
-                explanation: `<b>Jawaban Utama: 一共多少钱</b><br>Kombinasi kata total keseluruhan 一共 disandingkan dengan formula tanya 多少钱.`
-            });
+            // Tambah variasi soal harga yang sedikit & menyebar acak (biar tidak tumpuk)
+            if (i % 4 === 0) {
+                listSoal.push({
+                    type: "essay",
+                    question: `Materi Uang: Terjemahkan ke Hanzi nominal mata uang lisan ini: <br><b>"35.50 Renminbi (Lisan)"</b>`,
+                    pinyin: "Gunakan kata Kuai dan Mao.",
+                    acceptedAnswers: ["三十五块五毛", "三十五块五"],
+                    explanation: "<b>Jawaban Utama: 三十五块五毛</b>"
+                });
+            }
 
-            indexLoop++;
+            i++;
         }
         return listSoal;
     }
@@ -509,7 +481,6 @@
     let currentQuestionIndex = 0;
     let score = 0;
 
-    // DOM Elements
     const questionBadge = document.getElementById('question-badge');
     const questionElement = document.getElementById('question');
     const pinyinElement = document.getElementById('pinyin');
@@ -517,8 +488,6 @@
     const nextButton = document.getElementById('next-button');
     const checkButton = document.getElementById('check-button');
     const progressElement = document.getElementById('progress');
-    
-    // Container Elements
     const mcqContainer = document.getElementById('mcq-container');
     const essayContainer = document.getElementById('essay-container');
     const essayInput = document.getElementById('essay-input');
@@ -529,7 +498,6 @@
     let currentArrangeWords = [];
     let currentSelectedWords = [];
 
-    // Shuffle Function
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
         while (currentIndex != 0) {
@@ -540,9 +508,8 @@
         return array;
     }
 
-    // Filter spasi & tanda baca agar adil
     function cleanPunctuation(str) {
-        return str.replace(/[\s，。？?！!]/g, '');
+        return str ? str.replace(/[\s，。？?！!]/g, '') : '';
     }
 
     function startQuiz() {
@@ -558,12 +525,10 @@
         resetState();
         let q = shuffledQuestions[currentQuestionIndex];
         
-        // Progress Bar
         progressElement.style.width = ((currentQuestionIndex) / shuffledQuestions.length) * 100 + '%';
         questionElement.innerHTML = q.question;
         pinyinElement.innerText = q.pinyin || "";
 
-        // Label Badge Dinamis + Indikator Nomor
         let typeText = q.type === "mcq" ? "Pilihan Ganda" : q.type === "arrange" ? "Susun Kalimat" : "Esai Terjemahan";
         questionBadge.innerText = `${typeText} | Nomor ${currentQuestionIndex + 1} dari 100`;
 
@@ -580,7 +545,7 @@
         else if (q.type === "arrange") {
             arrangeContainer.style.display = 'flex';
             checkButton.style.display = 'block';
-            currentArrangeWords = shuffle([...q.words]);
+            currentArrangeWords = [...q.words]; 
             currentSelectedWords = [];
             renderArrangeUI();
         } 
@@ -716,11 +681,11 @@
         
         const feedbackText = document.getElementById('feedback-text');
         if (percentage === 100) {
-            feedbackText.innerText = "Luar biasa sempurna tanpa cela! 100 nomor berhasil Anda babat habis. Kemampuan grammar Bab 5, Bab 6, dan partikel 2 Anda berada di level Master! 🌟";
+            feedbackText.innerText = "Luar biasa sempurna tanpa cela! 100 nomor berhasil dibabat habis. Level Anda Master! 🌟";
         } else if (percentage >= 75) {
-            feedbackText.innerText = "Sangat Kuat! Anda berhasil mempertahankan konsentrasi fokus tinggi melewati rintangan marathon 100 nomor soal dengan hasil memuaskan. 👍";
+            feedbackText.innerText = "Sangat Kuat! Berhasil melewati maraton 100 nomor soal dengan hasil memuaskan. 👍";
         } else {
-            feedbackText.innerText = "Perjuangan yang bagus! Melintasi ujian ketahanan 100 soal bukanlah hal mudah. Mari ulangi kuis untuk menajamkan memori Hanzi Anda! 💪";
+            feedbackText.innerText = "Perjuangan yang bagus! Melintasi ujian ketahanan 100 soal bukanlah hal mudah. 💪";
         }
     }
 
@@ -728,8 +693,7 @@
         startQuiz();
     }
 
-    // Auto-Start
-    startQuiz();
+    validasiAkses();
 </script>
 
 </body>
